@@ -1,0 +1,8 @@
+node_modules/
+.env
+test-results/html-report/
+test-results/results.json
+playwright-report/
+/test-results/*.png
+/test-results/*.webm
+/test-results/*.zip

@@ -1,0 +1,20 @@
+{
+  "name": "ai-qa-engineer",
+  "version": "1.0.0",
+  "description": "AI Testing Assistant: User Story -> Test Cases -> Execute Tests -> Analyze Failures -> Bug Report",
+  "type": "module",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "report": "npx playwright show-report playwright-report",
+    "generate:cases": "node src/generate-test-cases.js",
+    "generate:bugs": "node src/generate-bug-report.js",
+    "explore": "node src/explorer.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0"
+  }
+}
