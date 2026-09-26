@@ -57,6 +57,16 @@ instruction to avoid generic filler — this was the single biggest lever for ou
   bug") without hedging. I added an explicit instruction to justify severity in one line and
   to label root-cause as a hypothesis, which fixed most of the overconfidence.
 
+## A real bug the pipeline actually found
+TC13 (300-character password) was written as a "hypothesis test": we expected the app to
+reject an unreasonably long password, and wrote the assertion accordingly. When run, it
+**failed** — not because the test was wrong, but because the app genuinely accepts passwords
+of any length with no maximum enforced. This is exactly the intended use of a
+hypothesis-labeled boundary test: a pass confirms the assumption, a fail surfaces a real
+finding. Full report: `bug-reports/bug-1-TC13-no-max-password-length.md`. By contrast, the
+same hypothesis applied to username length (TC11, 200 chars) *was* correctly rejected by the
+app — so the gap is specific to the password field, not the whole form.
+
 ## What I would improve with 7 more days
 1. **Cover the remaining 10 documented-but-not-automated test cases** (TC05, TC06, TC10, TC12,
    TC14, TC16, TC18, etc.), including the two currently "assumed" boundary values (min

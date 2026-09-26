@@ -27,15 +27,19 @@
 | TC08 | Negative | Wrong password on login | Register an account, then log in with the correct username but a wrong password | Login rejected with an error; user stays on /login | ⬜ (manual — exact error copy not yet verified) |
 | TC09 | Negative | Non-existent username on login | Log in with a username that was never registered | Login rejected with an error | ⬜ (manual) |
 | TC10 | Boundary | Very short username (2 chars) | username = "ab" | **Hypothesis:** rejected as too short. **Unverified** — if this test passes it confirms the hypothesis; if it fails, that is a genuine finding (no minimum enforced) worth a real bug report. | ✅ |
-| TC11 | Boundary | Very long username (100+ chars) | username = 100 random chars | Behavior unknown — needs manual check before automating a hard assertion | ⬜ (manual) |
+| TC11 | Boundary | Very long username (200 chars) | username = 200 repeated chars | **Hypothesis:** rejected as too long. If it actually registers, that's a real max-length bug worth reporting. | ✅ |
 | TC12 | Boundary | Very short password (2 chars) | password = "12" | **Hypothesis:** rejected as too short. Same unverified/real-finding logic as TC10. | ✅ |
-| TC13 | Boundary | Very long password | password = 200 random chars | Behavior unknown — needs manual check | ⬜ (manual) |
+| TC13 | Boundary | Very long password (300 chars) | password = 300 repeated chars | **Hypothesis was WRONG — real bug found.** The app actually accepts a 300-char password with no max-length check. See `bug-reports/bug-1-TC13-no-max-password-length.md`. | ✅ 🐞 **FAILED — real bug** |
 | TC14 | Validation | SQL-injection-like username | username = `' OR '1'='1` | App must not crash (no HTTP 500 / stack trace), regardless of whether the value is accepted or rejected | ✅ |
 | TC15 | Validation | Leading/trailing whitespace in username | username = `"  qauser123  "` | Behavior should be consistent (either trimmed-and-accepted, or rejected) — not silently broken | ⬜ (manual) |
 | TC16 | Validation | Unicode/emoji username | username = `"用户🙂test"` | App should not crash; accept-or-reject decision should be deliberate, not accidental | ⬜ (manual) |
 
+## Actual run result (see full evidence in test-results/ and playwright-report/)
+**11 passed, 1 failed** out of 12 automated tests. The 1 failure (TC13) is a genuine bug, not a
+broken test — see `bug-reports/bug-1-TC13-no-max-password-length.md` for the full report.
+
 **Total: 16 test cases** (2 positive / 7 negative / 4 boundary / 3 validation).
-**Automated in this challenge: 10** (`tests/register.spec.js`), covering every category at
+**Automated in this challenge: 12** (`tests/register.spec.js`), covering every category at
 least once with real, executable assertions against the live site. The ⬜ rows are the
 documented manual/backlog items — see `AI_WORKLOG.md` for what 7 more days would add
 (mainly: verifying exact validation copy so TC08/TC09/TC15/TC16 can be automated with

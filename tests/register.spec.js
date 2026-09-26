@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 // ---------------------------------------------------------------------------
 // IMPORTANT — verified against the live site (see AI_WORKLOG.md):
@@ -123,6 +123,34 @@ test('TC12 - Boundary: 2-character password does not register', async ({ page })
     username: `qauser${uniqueSuffix()}`,
     password: '12',
     confirm: '12',
+  });
+  await expect(page).toHaveURL(new RegExp(REGISTER_PATH + '$'));
+});
+
+// ---------- TC11 (Boundary): very long username ----------
+// HYPOTHESIS (unverified): a reasonable app should reject an unreasonably long
+// username (200 chars) rather than silently accepting it. If this test FAILS
+// (i.e. the app actually accepts it and navigates away from /register), that
+// is a genuine finding worth a real bug report — many apps forget to enforce
+// a max length even when they enforce a min length.
+test('TC11 - Boundary: 200-character username does not register', async ({ page }) => {
+  const longUsername = 'a'.repeat(200);
+  await fillRegisterForm(page, {
+    username: longUsername,
+    password: STRONG_PASSWORD,
+    confirm: STRONG_PASSWORD,
+  });
+  await expect(page).toHaveURL(new RegExp(REGISTER_PATH + '$'));
+});
+
+// ---------- TC13 (Boundary): very long password ----------
+// Same hypothesis-and-verify approach as TC11, applied to password length.
+test('TC13 - Boundary: 300-character password does not register', async ({ page }) => {
+  const longPassword = 'Aa1!'.repeat(75); // 300 chars
+  await fillRegisterForm(page, {
+    username: `qauser${uniqueSuffix()}`,
+    password: longPassword,
+    confirm: longPassword,
   });
   await expect(page).toHaveURL(new RegExp(REGISTER_PATH + '$'));
 });
